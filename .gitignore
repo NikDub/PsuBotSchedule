@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/
+data.txt
+name by group.txt
+Bot_DB.db
