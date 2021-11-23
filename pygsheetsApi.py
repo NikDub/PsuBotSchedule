@@ -8,11 +8,11 @@ sheets = gc.open_by_key("1ZSTYQ1cKa5fD8KYAdRmWlkzkvs35KGkqO-BKj8jZqBY")
 
 
 def pygsheetsWrite():
-    dataFile = open('data.txt', "r", 256, "utf-8")
+    dataFile = open('Data/data.txt', "r", 256, "utf-8")
     posDataFromFile = dataFile.read()
     dataFile.close()
 
-    f = open('data.txt', 'w+')
+    f = open('Data/data.txt', 'w+')
     f.seek(0)
     f.close()
 

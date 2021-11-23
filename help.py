@@ -27,7 +27,7 @@ def timeInRange(time1, time2, time3):
 
 
 def checkFileToRepeat(addGroup, addTime, addDate):
-    dataFile = open('data.txt', "r", 256, "utf-8")
+    dataFile = open('Data/data.txt', "r", 256, "utf-8")
     posDataFromFile = dataFile.read()
     dataFile.close()
 
@@ -41,3 +41,18 @@ def checkFileToRepeat(addGroup, addTime, addDate):
         if addDate == data[2] and timeParse(addTime) == timeParse(timeParse(data[1])) and data[0] == addGroup:
             return True
     return False
+
+
+def IsAdminCheck(msg):
+    dataFile = open('Data/Admin.txt', "r", 256, "utf-8")
+    posDataFromFile = dataFile.read()
+    dataFile.close()
+    AdminList = posDataFromFile.split("\n")
+    flag = 0
+    for item in AdminList:
+        if item.split(" ")[0] == msg.from_user.username:
+            flag = 1
+    if flag == 0:
+        return False
+    else:
+        return True

@@ -29,18 +29,11 @@ async def send_help(msg: types.Message):
                      f'\tСидоров\n')
 
 
-@dp.message_handler(commands=['write'])
-async def send_write(msg: types.Message):
-    await msg.answer("Мы начали записывать данные в таблицу")
-    pygsheetsWrite()
-    await msg.reply("Мы закончили записывать данные в таблицу")
-
-
 @dp.message_handler(commands=['visit'])
 async def send_visit(msg: types.Message):
     print(f"{msg.from_user.full_name} {msg.from_user.username}\n{msg.text}\n")
 
-    fileWithNameGroup = open("name by group.txt", "r", 256, "utf-8")
+    fileWithNameGroup = open("Data/name by group.txt", "r", 256, "utf-8")
     elderByGroup = fileWithNameGroup.readlines()
     fileWithNameGroup.close()
 
@@ -54,7 +47,7 @@ async def send_visit(msg: types.Message):
 
     timeMSG = msg.date.strftime("%H:%M")
     if timeInRange("09:00", timeMSG, "18:20"):
-        await msg.answer('Сейчас вы не можете отправить данные об отсутствующих')
+        await msg.answer('Сейчас вы не можете отправить данные об отсутствующих, данные принимаются с 9:00 по 18:20')
         return
 
     date = datetime.datetime.now().strftime("%d.%m.%Y")
@@ -64,6 +57,8 @@ async def send_visit(msg: types.Message):
 
     message = msg.text.splitlines()
     students_to_print = "\n".join(sorted(message[1:]))
+    if len(message) == 1:
+        return await msg.answer("Вы отправили пустую команду или не соблюдаете правильность написания сообщения(/help)")
     dateStartPair = timeParse(timeMSG)
     await msg.answer(f'Получены следующие данные:\n'
                      f'Группа - {group}\n'
@@ -72,7 +67,7 @@ async def send_visit(msg: types.Message):
                      f'Дата - {date}\n'
                      f"Отсутвующие - \n{students_to_print}\n")
 
-    with open('data.txt', "a", 256, "utf-8") as file:
+    with open('Data/data.txt', "a", 256, "utf-8") as file:
         file.write(
             f'{group}\n{timeMSG}\n{date}\n{students_to_print}\n|\n')
 
@@ -80,13 +75,26 @@ async def send_visit(msg: types.Message):
 # регистрация новых старост
 @dp.message_handler(commands=['registration'])
 async def send_registration(msg: types.Message):
-    print(f"/registration {msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n")
+    if IsAdminCheck(msg):
+        print(f"/registration {msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n")
 
-    await msg.answer(f"Вы были зарегестрированы как староста группы {msg.text.upper().split()[1]}")
+        await msg.answer(f"Вы были зарегестрированы как староста группы {msg.text.upper().split()[1]}")
 
-    with open('name by group.txt', "a", 256, "utf-8") as file:
-        file.write(
-            f'{msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n')
+        with open('name by group.txt', "a", 256, "utf-8") as file:
+            file.write(
+                f'{msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n')
+    else:
+        await msg.reply("У вас нет доступа к данному запросу")
+
+
+@dp.message_handler(commands=['write'])
+async def send_write(msg: types.Message):
+    if IsAdminCheck(msg):
+        await msg.answer("Запись данных в таблицу началась ▶️")
+        pygsheetsWrite()
+        await msg.reply("Данные были записаны в таблицу ⏹")
+    else:
+        await msg.reply("У вас нет доступа к данному запросу")
 
 
 async def set_default_commands(dp):
