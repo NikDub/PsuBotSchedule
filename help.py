@@ -56,3 +56,8 @@ def IsAdminCheck(msg):
         return False
     else:
         return True
+
+
+def Log(msg):
+    with open('Data/logChat.txt', "a", 256, "utf-8") as file:
+        file.write(f'{msg.date}\n{msg.from_user.username} {msg.from_user.full_name}\n{msg.text}\n\n')

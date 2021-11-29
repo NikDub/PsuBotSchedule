@@ -14,12 +14,14 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def send_start(msg: types.Message):
+    Log(msg)
     print(msg.from_user.full_name + "\n" + msg.text + "\n")
     await msg.answer(f'Я бот. Приятно познакомиться, {msg.from_user.full_name}')
 
 
 @dp.message_handler(commands=['help'])
 async def send_help(msg: types.Message):
+    Log(msg)
     print(msg.from_user.full_name + "\n" + msg.text + "\n")
     await msg.answer(f'Принимаются сообщения следующего вида(у - если причина уважительная): \n'
                      f'\t/visit\n'
@@ -31,6 +33,7 @@ async def send_help(msg: types.Message):
 
 @dp.message_handler(commands=['visit'])
 async def send_visit(msg: types.Message):
+    Log(msg)
     print(f"{msg.from_user.full_name} {msg.from_user.username}\n{msg.text}\n")
 
     fileWithNameGroup = open("Data/name by group.txt", "r", 256, "utf-8")
@@ -70,17 +73,21 @@ async def send_visit(msg: types.Message):
     with open('Data/data.txt', "a", 256, "utf-8") as file:
         file.write(
             f'{group}\n{timeMSG}\n{date}\n{students_to_print}\n|\n')
+    with open('Data/dataOpen.txt', "a", 256, "utf-8") as file:
+        file.write(
+            f'{group}\n{timeMSG}\n{date}\n{students_to_print}\n|\n')
 
 
 # регистрация новых старост
 @dp.message_handler(commands=['registration'])
 async def send_registration(msg: types.Message):
+    Log(msg)
     if IsAdminCheck(msg):
         print(f"/registration {msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n")
 
         await msg.answer(f"Вы были зарегестрированы как староста группы {msg.text.upper().split()[1]}")
 
-        with open('name by group.txt', "a", 256, "utf-8") as file:
+        with open('Data/name by group.txt', "a", 256, "utf-8") as file:
             file.write(
                 f'{msg.from_user.username} {msg.text.upper().split()[1]} {msg.from_user.full_name}\n')
     else:
@@ -89,6 +96,7 @@ async def send_registration(msg: types.Message):
 
 @dp.message_handler(commands=['write'])
 async def send_write(msg: types.Message):
+    Log(msg)
     if IsAdminCheck(msg):
         await msg.answer("Запись данных в таблицу началась ▶️")
         pygsheetsWrite()
@@ -103,12 +111,14 @@ async def set_default_commands(dp):
         types.BotCommand("help", "Описание основных команд бота"),
         types.BotCommand("visit", "Команда, позволяющая отправить данные о посещении"),
         types.BotCommand("registration",
-                         "Команда в данный момент не доступна, позволяющая регистрироваться как староста группы"),
+                         "⭐Команда, позволяющая регистрироваться как староста группы"),
+        types.BotCommand("write", "⭐Команда, позволяющая записывать данные в онлайн таблицу"),
     ])
 
 
 @dp.message_handler(content_types=['text'])
 async def get_text_messages(msg: types.Message):
+    Log(msg)
     if msg.text.lower() == 'привет':
         await msg.answer('Привет!')
     elif msg.text.lower() == "охаё":
