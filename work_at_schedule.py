@@ -1,20 +1,34 @@
+import asyncio
 import datetime
-import time
-import schedule
+
+from help import sendScheduleDay, sendScheduleLess
 from pygsheetsApi import pygsheetsWrite
 
 
-def RequestAtTime():
+async def RequestAtTime():
     print(datetime.datetime.now().strftime('%H:%M:%S'))
     pygsheetsWrite()
 
 
-def scheduleStart():
-    # срабатывает в 11:00 ежедневно, служит для отправки посещения первых пар
-    schedule.every().day.at("11:00").do(RequestAtTime)
-    # срабатывает в 20:00 ежедневно, служит для сбора статистики за день
-    schedule.every().day.at("20:55").do(RequestAtTime)
+async def RequestSendDay():
+    print(datetime.datetime.now().strftime('%H:%M:%S'))
+    await sendScheduleDay(1)
+
+
+async def scheduleStart():
 
     while True:
-        schedule.run_pending()
-        time.sleep(20)
+        hours = int(datetime.datetime.now().time().strftime("%H"))
+        minutes = int(datetime.datetime.now().time().strftime("%M"))
+        second = int(datetime.datetime.now().time().strftime("%S"))
+        if hours == 11 and minutes == 00 and second == 00:
+            await RequestAtTime()
+        if hours == 20 and minutes == 00 and second == 00:
+            await RequestAtTime()
+        if hours == 20 and minutes == 00 and second == 00:
+            await RequestSendDay()
+
+        if second % 60 == 0:
+            await sendScheduleLess()
+
+        await asyncio.sleep(1)

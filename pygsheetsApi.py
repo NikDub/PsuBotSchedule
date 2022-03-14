@@ -1,31 +1,23 @@
-from help import timeParse
-
 import pygsheets
 
-gc = pygsheets.authorize(service_file="creds.json", scopes=['https://www.googleapis.com/auth/spreadsheets',
+from dbWork import *
+from help import timeParse
+
+gc = pygsheets.authorize(service_file="Data/creds.json", scopes=['https://www.googleapis.com/auth/spreadsheets',
                                                             'https://www.googleapis.com/auth/drive'])
 sheets = gc.open_by_key("1ZSTYQ1cKa5fD8KYAdRmWlkzkvs35KGkqO-BKj8jZqBY")
 
 
 def pygsheetsWrite():
-    dataFile = open('Data/data.txt', "r", 256, "utf-8")
-    posDataFromFile = dataFile.read()
-    dataFile.close()
+    posDataFromFile = dataGet().fetchall()
+    setStatus(posDataFromFile)
+    for item in posDataFromFile:
 
-    f = open('Data/data.txt', 'w+')
-    f.seek(0)
-    f.close()
+        group = item[0]
+        time = timeParse(item[1].strftime("%H:%M"))
 
-    for item in posDataFromFile.split("|"):
-        data = item.strip().splitlines()
-        if len(data) == 0:
-            break
-
-        group = data[0]
-        time = timeParse(data[1])
-
-        date = data[2]
-        students = data[3:]
+        date = item[2].strftime("%d.%m.%Y")
+        students = item[3].split('\n')
         sheet = sheets.worksheet_by_title(group)
         sheetData = sheet.get_all_values()
 
@@ -59,7 +51,6 @@ def pygsheetsWrite():
             if sheetData[1][columnTime].strip() != "":
                 if sheetData[1][columnTime].strip() == time:
                     timeColumn = columnTime
-                    print(sheetData[1][columnTime].strip())
                     break
 
         startIndex = 2
@@ -68,11 +59,9 @@ def pygsheetsWrite():
                 temp = sheetData[rowStudent][0].strip()
                 if temp != "":
                     if sheetData[rowStudent][0].strip().find(student.split(" ")[0]) != -1:
-                        print(f"{rowStudent}. {student}")
                         startIndex = rowStudent
                         if student[-1].lower() == "у" and student[-2] == " ":
                             sheet.cell((rowStudent + 1, timeColumn + 1)).value = "У"
                         else:
                             sheet.cell((rowStudent + 1, timeColumn + 1)).value = "2"
                         break
-
