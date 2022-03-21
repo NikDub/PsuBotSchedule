@@ -1,15 +1,10 @@
 import datetime
 import string
 
-import pyodbc
+import sqlite3
 
-# import sqlite3
-# connection = sqlite3.connect('data.sqlite')
 
-connection = pyodbc.connect('Driver={PostgreSQL ODBC Driver(UNICODE)};'
-                            'UID=postgres;'
-                            'PWD=1;'
-                            'Server=localhost;Database=Kikusha;Trusted_Connection=yes')
+connection = sqlite3.connect('scheduledb.sqlite')
 dbCursor = connection.cursor()
 
 
@@ -48,18 +43,18 @@ def getGroupByName(name):
 
 def createGroup(name):
     dbCursor.execute(f"insert into groups(name) values('{name}')")
-    dbCursor.commit()
+    connection.commit()
 
 
 def setGroupForUser(userid, groupid, subgroup):
     dbCursor.execute(f"update users set groupid={groupid}, subgroup = {subgroup} where usertid = {userid}")
-    dbCursor.commit()
+    connection.commit()
 
 
 def createUser(data):
     dbCursor.execute(f"insert into users(rollid, groupid, fullname, username, subgroup, userTid) values(2,null, "
                      f"'{data.full_name}', '{data.username}', null, {data.id})")
-    dbCursor.commit()
+    connection.commit()
 
 
 def getOlderGroup(userid):
@@ -79,7 +74,7 @@ def dataSet(userid, time, data, datetime1):
     userID = getUserByTid(userid).fetchone()[0]
     dbCursor.execute(
         f"insert into datapass(userid, time, textstr, status,  datetime) values({userID}, '{time}', '{data}', '0', '{datetime1}')")
-    dbCursor.commit()
+    connection.commit()
 
 
 def dataGet():
@@ -95,7 +90,7 @@ def selectDataRepeat(addGroup, addTime, addDate):
 def setStatus(data):
     for item in data:
         dbCursor.execute(f"update datapass set status = 1 where id = {item[4]}")
-    dbCursor.commit()
+    connection.commit()
 
 
 def LogInfo(datetime1: datetime, userid: string, command: string, msg: string):
@@ -106,7 +101,7 @@ def LogInfo(datetime1: datetime, userid: string, command: string, msg: string):
 
     dbCursor.execute(
         f"insert into chatlog(userid, command, text, datetime) values({userid}, '{command}', '{msg}','{datetime1}')")
-    dbCursor.commit()
+    connection.commit()
 
 
 def getRole(user):
@@ -116,17 +111,17 @@ def getRole(user):
 
 def adminSQL_setRollAsAdmin(userid):
     dbCursor.execute(f"update users set rollid = 1 where usertid = {userid} ")
-    dbCursor.commit()
+    connection.commit()
 
 
 def adminSQL_setRollAsTeacher(userid):
     dbCursor.execute(f"update users set rollid = 3 where usertid = {userid} ")
-    dbCursor.commit()
+    connection.commit()
 
 
 def adminSQL_setRollAsOlder(userid):
     dbCursor.execute(f"update users set isolder = true where usertid = {userid} ")
-    dbCursor.commit()
+    connection.commit()
 
 
 def getSubByUser(usertid):
@@ -137,17 +132,17 @@ def getSubByUser(usertid):
 def createSubForUser(usertid):
     dbCursor.execute(f"insert into subscribers(subforday, subforless, userid) values(0,0,"
                      f" {getUserByTid(usertid).fetchone()[0]})")
-    dbCursor.commit()
+    connection.commit()
 
 
 def subUserToDay(userid, set_day):
     dbCursor.execute(f"update subscribers set subforday = {set_day} where userid = {userid}")
-    dbCursor.commit()
+    connection.commit()
 
 
 def subUserToLess(userid, set_lass, time):
     dbCursor.execute(f"update subscribers set subforless = {set_lass}, lesstime = {time} where userid = {userid}")
-    dbCursor.commit()
+    connection.commit()
 
 
 def getUserSubsToDay():

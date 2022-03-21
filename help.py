@@ -224,8 +224,7 @@ async def sendScheduleLess():
             str_for_user += f"({weekNum - getWeekNumberByUser(item[0])[0] + 1})\n\n"
 
             for i in getScheduleToDay(item[0], dayOfWeek, weekNumber):
-
-                time_interval = datetime.datetime.strptime(i[3].strftime('%H:%M:%S'), "%H:%M:%S") - \
+                time_interval = datetime.datetime.strptime(i[3], "%H:%M:%S") - \
                                 datetime.datetime.strptime(timeNow.strftime('%H:%M:%S'), "%H:%M:%S")
                 time_leave = time_interval.seconds / 60
                 if time_leave == i[5]:
@@ -235,8 +234,7 @@ async def sendScheduleLess():
             str_for_user += f"\n\n"
 
             for i in getScheduleToDayForTeach(item[0], dayOfWeek, weekNumber):
-
-                time_interval = datetime.datetime.strptime(i[3].strftime('%H:%M:%S'), "%H:%M:%S") - \
+                time_interval = datetime.datetime.strptime(i[3], "%H:%M:%S") - \
                                 datetime.datetime.strptime(timeNow.strftime('%H:%M:%S'), "%H:%M:%S")
 
                 time_leave = time_interval.seconds / 60
