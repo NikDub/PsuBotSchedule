@@ -3,8 +3,13 @@ import string
 
 import pyodbc
 
-connection = pyodbc.connect('Driver={ODBC Driver 17 for SQL '
-                            'Server};Server=localhost;Database=Kikusha;Trusted_Connection=yes')
+# import sqlite3
+# connection = sqlite3.connect('data.sqlite')
+
+connection = pyodbc.connect('Driver={PostgreSQL ODBC Driver(UNICODE)};'
+                            'UID=postgres;'
+                            'PWD=1;'
+                            'Server=localhost;Database=Kikusha;Trusted_Connection=yes')
 dbCursor = connection.cursor()
 
 
@@ -58,16 +63,16 @@ def createUser(data):
 
 
 def getOlderGroup(userid):
-    return dbCursor.execute(f"select a.name from users as b, groups as a where b.isOlder=1 and a.id = b.groupid"
+    return dbCursor.execute(f"select a.name from users as b, groups as a where b.isOlder=true and a.id = b.groupid"
                             f" and b.userTid = {userid}")
 
 
 def getOlderForCheck(userTid):
-    return dbCursor.execute(f"select * from users where usertid = {userTid} and isolder = 1")
+    return dbCursor.execute(f"select * from users where usertid = {userTid} and isolder = true")
 
 
 def getOlders():
-    return dbCursor.execute(f"select * from users where isolder = 1")
+    return dbCursor.execute(f"select * from users where isolder = true")
 
 
 def dataSet(userid, time, data, datetime1):
@@ -100,8 +105,7 @@ def LogInfo(datetime1: datetime, userid: string, command: string, msg: string):
         command = command.replace('/', '')
 
     dbCursor.execute(
-        f"insert into chatlog(userid, command, text, datetime) values({userid}, '{command}', '{msg}',CAST('{datetime1}'"
-        f" AS DATETIME2))")
+        f"insert into chatlog(userid, command, text, datetime) values({userid}, '{command}', '{msg}','{datetime1}')")
     dbCursor.commit()
 
 
@@ -121,13 +125,13 @@ def adminSQL_setRollAsTeacher(userid):
 
 
 def adminSQL_setRollAsOlder(userid):
-    dbCursor.execute(f"update users set isolder = 1 where usertid = {userid} ")
+    dbCursor.execute(f"update users set isolder = true where usertid = {userid} ")
     dbCursor.commit()
 
 
 def getSubByUser(usertid):
     return dbCursor.execute(f"select b.id, b.subforless, b.subforday, b.userid from users as a, subscribers as b where "
-                     f"a.id = b.userid and a.usertid = {usertid}")
+                            f"a.id = b.userid and a.usertid = {usertid}")
 
 
 def createSubForUser(usertid):
@@ -148,7 +152,7 @@ def subUserToLess(userid, set_lass, time):
 
 def getUserSubsToDay():
     return dbCursor.execute(f"select a.id, a.usertid, a.rollid from users as a, subscribers as b where a.id = b.userid "
-                            f"and b.subforday = 1")
+                            f"and b.subforday = true")
 
 
 def getUserSubsToDayNow(userTid):
@@ -157,7 +161,7 @@ def getUserSubsToDayNow(userTid):
 
 def getUserSubsToLess():
     return dbCursor.execute(f"select a.id, a.usertid, a.rollid from users as a, subscribers as b where a.id = b.userid "
-                            f"and b.subforless = 1")
+                            f"and b.subforless = true")
 
 
 def getScheduleToDay(userid, day, week):
@@ -171,7 +175,7 @@ def getScheduleToDay(userid, day, week):
                             f" and c.roomid = g.id and  "
                             f" c.subjectnameid = f.id "
                             f" and c.week_colorid = e.id "
-                            f" and (a.subgroup = c.subgroup or c.subgroup = 0) "
+                            f" and (cast(a.subgroup as int) = c.subgroup or c.subgroup = 0) "
                             f" and a.id = {userid} "
                             f" and h.id = {day} "
                             f" and (e.id = {week} or e.id = 3) "
@@ -188,7 +192,7 @@ def getScheduleToDayNow(userid, day, week):
                             f" and c.roomid = g.id and  "
                             f" c.subjectnameid = f.id "
                             f" and c.week_colorid = e.id "
-                            f" and (a.subgroup = c.subgroup or c.subgroup = 0) "
+                            f" and (cast(a.subgroup as int) = c.subgroup or c.subgroup = 0) "
                             f" and a.id = {userid} "
                             f" and h.id = {day} "
                             f" and (e.id = {week} or e.id = 3) "
@@ -286,4 +290,3 @@ def getTeacherByName(name):
 
 def getGroupByNameForSend(name):
     return dbCursor.execute(f"select name from groups where name like '{name}%'").fetchone()
-
