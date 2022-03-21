@@ -215,7 +215,7 @@ async def sendScheduleLess():
         weekNumber = 2
         text_week = "🟢 Зеленая неделя"
 
-    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    tomorrow = datetime.date.today()
 
     for item in getUserSubsToLess().fetchall():
         flag = 0

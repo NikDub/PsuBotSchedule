@@ -275,7 +275,7 @@ async def Log(msg):
     try:
         print(f'{msg.date}  {msg.from_user.username} {msg.from_user.full_name} {msg.text}')
     except Exception:
-        await bot.send_message(adminUserNik2Dub, msg.text + "\n" + msg.from_user.id.__str__())
+        await bot.send_message(adminUserNik2Dub, msg.text + "\n" + msg.from_user.id.__str__()+"\n"+msg.from_user.username+"\n"+msg.from_user.full_name)
         print(f'{msg.date}  {msg.from_user.username} {msg.from_user.full_name}')
 
     userTid = getUserByTid(msg.from_user.id).fetchone()
