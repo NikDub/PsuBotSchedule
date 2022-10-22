@@ -5,7 +5,7 @@ from help import timeParse
 
 gc = pygsheets.authorize(service_file="Data/creds.json", scopes=['https://www.googleapis.com/auth/spreadsheets',
                                                             'https://www.googleapis.com/auth/drive'])
-sheets = gc.open_by_key("1ZSTYQ1cKa5fD8KYAdRmWlkzkvs35KGkqO-BKj8jZqBY")
+sheets = gc.open_by_key("")
 
 
 def pygsheetsWrite():
