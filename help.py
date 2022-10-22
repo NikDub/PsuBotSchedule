@@ -130,12 +130,12 @@ async def sendScheduleDay(day):
         elif item[2] == 3:
             str_for_user += f"\n\n"
             for i in getScheduleToDayForTeach(item[0], dayOfWeek, weekNumber):
-                subtext = f"Подгруппа {i[7]}"
-                if i[7] == 0:
+                subtext = f"Подгруппа {i[6]}"
+                if i[6] == 0:
                     subtext = ""
 
-                str_for_user += f"⭐️ {i[3]} - {i[4]} {i[0]} {i[1] + i[2]} - {i[6]} {subtext} " \
-                                f"({weekNum - getWeekNumberByGroup(i[8])[0] + 1})\n\n"
+                str_for_user += f"⭐️ {i[3]} - {i[4]} {i[0]} {i[1] + i[2]} - {i[5]} {subtext} " \
+                                f"({weekNum - getWeekNumberByGroup(i[7])[0] + 1})\n\n"
                 flag = 1
 
         if flag == 1:
@@ -176,12 +176,12 @@ async def sendScheduleDayNow(day, usertid):
         str_for_user = f"Дата: {tomorrow.strftime('%d.%m.%Y')} {text_week} "
         if item[2] == 2:
             str_for_user += f"({weekNum - getWeekNumberByUser(item[0])[0] + 1})\n\n"
-            for i in getScheduleToDayNow(item[0], dayOfWeek, weekNumber):
+            for i in getScheduleToDay(item[0], dayOfWeek, weekNumber):
                 str_for_user += f"⭐️ {i[3]} - {i[4]} {i[0]} {i[1] + i[2]}\n\n"
                 flag = 1
         elif item[2] == 3:
             str_for_user += f"\n\n"
-            for i in getScheduleToDayForTeachNow(item[0], dayOfWeek, weekNumber):
+            for i in getScheduleToDayForTeach(item[0], dayOfWeek, weekNumber):
                 subtext = f"Подгруппа {i[6]}"
                 if i[6] == 0:
                     subtext = ""
@@ -238,13 +238,13 @@ async def sendScheduleLess():
                                 datetime.datetime.strptime(timeNow.strftime('%H:%M:%S'), "%H:%M:%S")
 
                 time_leave = time_interval.seconds / 60
-                if time_leave == i[5]:
-                    subtext = f"Подгруппа {i[7]}"
-                    if i[7] == 0:
+                if time_leave == i[8]:
+                    subtext = f"Подгруппа {i[6]}"
+                    if i[6] == 0:
                         subtext = ""
 
-                    str_for_user += f"⭐️ {i[3]} - {i[4]} {i[0]} {i[1] + i[2]} - {i[6]} {subtext} " \
-                                    f"({weekNum - getWeekNumberByGroup(i[8])[0] + 1})\n\n"
+                    str_for_user += f"⭐️ {i[3]} - {i[4]} {i[0]} {i[1] + i[2]} - {i[5]} {subtext} " \
+                                    f"({weekNum - getWeekNumberByGroup(i[7])[0] + 1})\n\n"
                     flag = 1
         if flag:
             await bot.send_message(item[1], str_for_user)

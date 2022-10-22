@@ -177,46 +177,14 @@ def getScheduleToDay(userid, day, week):
                             f" order by d.timestart").fetchall()
 
 
-def getScheduleToDayNow(userid, day, week):
-    return dbCursor.execute(f"select distinct f.name, g.name, g.housing, d.timestart, d.timestop "
-                            f" from users as a, Schedules as c, LessonsTime as d, WeekColors as e, Subjects as f, "
-                            f" Rooms as g, Days as h"
-                            f" where a.groupid = c.groupid "
-                            f" and c.dayid = h.id "
-                            f" and c.lessonstimeid = d.id "
-                            f" and c.roomid = g.id and  "
-                            f" c.subjectnameid = f.id "
-                            f" and c.week_colorid = e.id "
-                            f" and (cast(a.subgroup as int) = c.subgroup or c.subgroup = 0) "
-                            f" and a.id = {userid} "
-                            f" and h.id = {day} "
-                            f" and (e.id = {week} or e.id = 3) "
-                            f" order by d.timestart").fetchall()
-
-
 def getScheduleToDayForTeach(userid, day, week):
-    return dbCursor.execute(f"select distinct f.name, g.name, g.housing, d.timestart, d.timestop, b.lesstime, "
-                            f"a.name, c.subgroup, a.id "
-                            f"from Schedules as c, LessonsTime as d, WeekColors as e, Subjects as f, Rooms as g, "
-                            f"Days as h, subscribers as b, Groups as a "
-                            f"where c.teacherid = {userid} "
-                            f"and b.userid = c.teacherid "
-                            f"and a.id = c.groupid "
-                            f"and c.dayid = h.id "
-                            f"and c.lessonstimeid = d.id "
-                            f"and c.roomid = g.id "
-                            f"and c.subjectnameid = f.id "
-                            f"and c.week_colorid = e.id "
-                            f"and h.id = {day} "
-                            f"and (e.id = {week} or e.id = 3) order by d.timestart").fetchall()
-
-
-def getScheduleToDayForTeachNow(userid, day, week):
     return dbCursor.execute(f"select distinct f.name, g.name, g.housing, d.timestart, d.timestop, a.name, c.subgroup, "
-                            f"a.id "
+                            f"a.id, b.lesstime "
                             f"from Schedules as c, LessonsTime as d, WeekColors as e, Subjects as f, Rooms as g, "
-                            f"Days as h, Groups as a "
-                            f"where c.teacherid = {userid} "
+                            f"Days as h, subscribers as b, Groups as a, Teachers as t "
+                            f"where t.userid = {userid} "
+                            f"and c.teacherid = t.id "
+                            f"and b.userid = c.teacherid "
                             f"and a.id = c.groupid "
                             f"and c.dayid = h.id "
                             f"and c.lessonstimeid = d.id "
@@ -245,8 +213,7 @@ def getScheduleByTeacher(str, day, week):
                             f"from Schedules as c, LessonsTime as d, WeekColors as e, Subjects as f, Rooms as g, "
                             f"Days as h, Groups as a, users as b, Teachers as t "
                             f"where "
-                            f"c.teacherid = b.id "
-                            f"and t.id = b.id "
+                            f"c.teacherid = t.id "
                             f"and t.name LIKE '{str}%' "
                             f"and a.id = c.groupid "
                             f"and c.dayid = h.id "

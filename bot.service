@@ -1,0 +1,15 @@
+[Unit]
+Description=Telegram bot 'Psu schedule'
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/bot
+ExecStart=python3 /root/bot/main.py
+RestartSec=5
+Restart=always
+ 
+[Install]
+WantedBy=multi-user.target

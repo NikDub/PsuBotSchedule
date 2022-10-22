@@ -28,7 +28,7 @@ async def scheduleStart():
         if hours == 20 and minutes == 00 and second == 00:
             await RequestSendDay()
 
-        if second % 60 == 0:
+        if second % 1 == 0:
             await sendScheduleLess()
 
         await asyncio.sleep(1)
